@@ -1,22 +1,23 @@
-'use client';
+"use client";
 
-import { CSSProperties, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { CSSProperties, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   clearSession,
   getHabits,
   getValidSession,
   saveHabits,
-} from '@/data/storage';
-import { toggleHabitCompletion } from '@/lib/habits';
-import { validateHabitName } from '@/lib/validators';
-import type { Session } from '@/types/auth';
-import type { Habit } from '@/types/habit';
-import { getTodayDate } from '@/utils/date';
-import { HabitCard } from './HabitCard';
-import { HabitForm } from './HabitForm';
+} from "@/data/storage";
+import { generateUUID } from "@/lib/uuid";
+import { toggleHabitCompletion } from "@/lib/habits";
+import { validateHabitName } from "@/lib/validators";
+import type { Session } from "@/types/auth";
+import type { Habit } from "@/types/habit";
+import { getTodayDate } from "@/utils/date";
+import { HabitCard } from "./HabitCard";
+import { HabitForm } from "./HabitForm";
 
-type FormMode = 'create' | 'edit';
+type FormMode = "create" | "edit";
 
 type FormState = {
   open: boolean;
@@ -28,10 +29,10 @@ type FormState = {
 
 const defaultFormState: FormState = {
   open: false,
-  mode: 'create',
+  mode: "create",
   habitId: null,
-  name: '',
-  description: '',
+  name: "",
+  description: "",
 };
 
 function getUserHabits(userId: string): Habit[] {
@@ -96,16 +97,16 @@ const styles: Record<string, CSSProperties> = {
     alignItems: "flex-start",
     gap: 6,
   },
-  subtitle: { 
-    fontSize: "11px", 
-    fontWeight: 450, 
-    color: "var(--dark-200)", 
+  subtitle: {
+    fontSize: "11px",
+    fontWeight: 450,
+    color: "var(--dark-200)",
     textAlign: "center",
   },
-  title: { 
-    fontSize: "14px", 
-    fontWeight: 500, 
-    color: "var(--dark-100)", 
+  title: {
+    fontSize: "14px",
+    fontWeight: 500,
+    color: "var(--dark-100)",
     textAlign: "center",
   },
   topBox2: {
@@ -113,23 +114,23 @@ const styles: Record<string, CSSProperties> = {
     alignItems: "center",
     gap: 8,
   },
-  logoutButton: { 
-    fontSize: "11px", 
-    fontWeight: 450, 
+  logoutButton: {
+    fontSize: "11px",
+    fontWeight: 450,
     color: "var(--dark-200)",
     padding: "3px 8px",
-    backgroundColor: "var(--dark-300)", 
+    backgroundColor: "var(--dark-300)",
     border: "1px solid var(--light-100)",
-    borderRadius: 7
+    borderRadius: 7,
   },
-  createButton: { 
-    fontSize: "11px", 
-    fontWeight: 400, 
+  createButton: {
+    fontSize: "11px",
+    fontWeight: 400,
     color: "var(--light-100)",
     padding: "3px 8px",
-    backgroundColor: "var(--dark-200)", 
+    backgroundColor: "var(--dark-200)",
     border: "1px solid var(--light-100)",
-    borderRadius: 7
+    borderRadius: 7,
   },
   grid: {
     display: "grid",
@@ -170,7 +171,7 @@ const styles: Record<string, CSSProperties> = {
   modal: {
     width: "100%",
     maxWidth: "400px",
-    padding: 15
+    padding: 15,
   },
   spinner: {
     width: 32,
@@ -189,14 +190,16 @@ export function DashboardClient() {
   const [isReady, setIsReady] = useState(false);
   const [formState, setFormState] = useState<FormState>(defaultFormState);
   const [formError, setFormError] = useState<string | null>(null);
-  const [confirmingHabitId, setConfirmingHabitId] = useState<string | null>(null);
+  const [confirmingHabitId, setConfirmingHabitId] = useState<string | null>(
+    null,
+  );
   const today = getTodayDate();
 
   useEffect(() => {
     const activeSession = getValidSession();
 
     if (!activeSession) {
-      router.replace('/login');
+      router.replace("/login");
       return;
     }
 
@@ -211,7 +214,9 @@ export function DashboardClient() {
     }
 
     const allHabits = getHabits();
-    const otherUsersHabits = allHabits.filter((habit) => habit.userId !== session.userId);
+    const otherUsersHabits = allHabits.filter(
+      (habit) => habit.userId !== session.userId,
+    );
     const nextHabits = [...otherUsersHabits, ...updatedHabits];
 
     saveHabits(nextHabits);
@@ -223,10 +228,10 @@ export function DashboardClient() {
     setConfirmingHabitId(null);
     setFormState({
       open: true,
-      mode: 'create',
+      mode: "create",
       habitId: null,
-      name: '',
-      description: '',
+      name: "",
+      description: "",
     });
   };
 
@@ -238,7 +243,7 @@ export function DashboardClient() {
   const handleSaveHabit = (values: {
     name: string;
     description: string;
-    frequency: 'daily';
+    frequency: "daily";
   }) => {
     if (!session) {
       return;
@@ -253,14 +258,14 @@ export function DashboardClient() {
 
     setFormError(null);
 
-    if (formState.mode === 'edit' && formState.habitId) {
+    if (formState.mode === "edit" && formState.habitId) {
       const nextHabits = habits.map((habit) =>
         habit.id === formState.habitId
           ? {
               ...habit,
               name: validation.value,
               description: values.description,
-              frequency: 'daily' as const,
+              frequency: "daily" as const,
             }
           : habit,
       );
@@ -271,11 +276,11 @@ export function DashboardClient() {
     }
 
     const newHabit: Habit = {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       userId: session.userId,
       name: validation.value,
       description: values.description,
-      frequency: 'daily',
+      frequency: "daily",
       createdAt: new Date().toISOString(),
       completions: [],
     };
@@ -295,7 +300,7 @@ export function DashboardClient() {
     setConfirmingHabitId(null);
     setFormState({
       open: true,
-      mode: 'edit',
+      mode: "edit",
       habitId: habit.id,
       name: habit.name,
       description: habit.description,
@@ -326,12 +331,12 @@ export function DashboardClient() {
 
   const handleLogout = () => {
     clearSession();
-    router.replace('/login');
+    router.replace("/login");
   };
 
   const getStartOfWeek = () => {
     const today = new Date();
-    const day = today.getDay(); 
+    const day = today.getDay();
     const diff = today.getDate() - day;
     const start = new Date(today.setDate(diff));
     start.setHours(0, 0, 0, 0);
@@ -345,7 +350,9 @@ export function DashboardClient() {
     });
   }).length;
 
-  const [screen, setScreen] = useState<"mobile" | "tablet" | "desktop">("desktop");
+  const [screen, setScreen] = useState<"mobile" | "tablet" | "desktop">(
+    "desktop",
+  );
 
   useEffect(() => {
     const handleResize = () => {
@@ -389,10 +396,14 @@ export function DashboardClient() {
     <main style={styles.container}>
       <svg style={{ display: "none" }}>
         <filter id="noiseFilter">
-          <feTurbulence type="fractalNoise" baseFrequency="0.6" stitchTiles="stitch" />
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.6"
+            stitchTiles="stitch"
+          />
         </filter>
       </svg>
-      
+
       <div style={styles.noiseOverlay} />
 
       <div style={styles.main}>
@@ -405,11 +416,30 @@ export function DashboardClient() {
               gap: isMobile ? 10 : 15,
             }}
           >
-            <div style={styles.topBox1}>
+            <div
+              style={{
+                ...styles.topBox1,
+                alignItems: isMobile
+                  ? "center"
+                  : (styles.topBox1 as any).alignItems,
+                textAlign: isMobile ? "center" : "left",
+                width: isMobile ? "100%" : undefined,
+              }}
+            >
               <p style={styles.subtitle}>Hi, {session.email}!</p>
-              <h1 style={styles.title}>You have completed {completedThisWeek} tasks today!</h1>
+              <h1 style={styles.title}>
+                You have completed {completedThisWeek} tasks today!
+              </h1>
             </div>
-            <div style={styles.topBox2}>
+            <div
+              style={{
+                ...styles.topBox2,
+                justifyContent: isMobile
+                  ? "center"
+                  : (styles.topBox2 as any).justifyContent,
+                width: isMobile ? "100%" : undefined,
+              }}
+            >
               <button
                 data-testid="auth-logout-button"
                 style={styles.logoutButton}
@@ -436,12 +466,14 @@ export function DashboardClient() {
               <div style={styles.modal}>
                 <HabitForm
                   initialValues={{
-                  name: formState.name,
-                  description: formState.description,
-                  frequency: 'daily',
-                }}
+                    name: formState.name,
+                    description: formState.description,
+                    frequency: "daily",
+                  }}
                   error={formError}
-                  submitLabel={formState.mode === 'edit' ? 'Update habit' : 'Save habit'}
+                  submitLabel={
+                    formState.mode === "edit" ? "Update habit" : "Save habit"
+                  }
                   onSubmit={handleSaveHabit}
                   onCancel={closeForm}
                 />
@@ -450,10 +482,7 @@ export function DashboardClient() {
           )}
 
           {habits.length === 0 ? (
-            <section
-              data-testid="empty-state"
-              style={styles.middle}
-            >
+            <section data-testid="empty-state" style={styles.middle}>
               <div style={styles.middleMain}>
                 <h3 style={styles.title}>No habits yet</h3>
                 <p style={styles.subtitle}>
@@ -469,8 +498,8 @@ export function DashboardClient() {
                   screen === "mobile"
                     ? "repeat(1, 1fr)"
                     : screen === "tablet"
-                    ? "repeat(2, 1fr)"
-                    : "repeat(4, 1fr)",
+                      ? "repeat(2, 1fr)"
+                      : "repeat(4, 1fr)",
               }}
             >
               {habits.map((habit) => (

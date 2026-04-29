@@ -51,16 +51,16 @@ button {
 }
 
 button:hover {
-  background-color: var(--accent-400);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(16,185,129,0.06);
+  /* Minimal hover: tiny lift, no brightness change to avoid 'dancing'. */
+  transform: translateY(-0.8px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
 }
 
 /* Active state: pressed slightly */
 button:active {
-  transform: translateY(0) scale(0.995);
-  background-color: var(--accent-600);
-  box-shadow: 0 4px 12px rgba(11,95,84,0.08);
+  /* pressed-in effect */
+  transform: translateY(0) scale(0.998);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
 
 /* Subtle centered ripple using a pseudo-element */
@@ -69,20 +69,21 @@ button::after {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   background: rgba(255,255,255,0.18);
+  mix-blend-mode: overlay;
   border-radius: 50%;
   transform: translate(-50%, -50%) scale(0);
   opacity: 0;
   pointer-events: none;
-  transition: transform 420ms cubic-bezier(.2,.8,.2,1), opacity 420ms ease;
+  transition: transform 360ms cubic-bezier(.2,.8,.2,1), opacity 360ms ease;
 }
 
 button:active::after {
-  transform: translate(-50%, -50%) scale(16);
-  opacity: 0.0;
-  transition: transform 420ms cubic-bezier(.2,.8,.2,1), opacity 420ms ease;
+  transform: translate(-50%, -50%) scale(6);
+  opacity: 0.06;
+  transition: transform 180ms cubic-bezier(.2,.8,.2,1), opacity 180ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -129,9 +130,9 @@ input:focus, textarea:focus, select:focus {
 }
 
 .btn-accent:hover {
-  background-color: var(--accent-400);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(16,185,129,0.06);
+  background-color: color-mix(in srgb, var(--accent-500) 70%, var(--light-100) 30%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(16,185,129,0.10);
 }
 
 .subtle-hover:hover {

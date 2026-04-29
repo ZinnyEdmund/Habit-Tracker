@@ -195,6 +195,7 @@ export function HabitCard(props: HabitCardProps) {
             </button>
             <button
               data-testid={`habit-delete-${slug}`}
+              className=""
               style={styles.deleteButton}
               type="button"
               onClick={() => onDeleteRequest(habit.id)}

@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { CSSProperties, FormEvent, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { getUsers, saveSession, saveUsers } from '@/data/storage';
-import Link from 'next/link';
-import Image from 'next/image';
+import { CSSProperties, FormEvent, useEffect, useState } from "react";
+import { generateUUID } from "@/lib/uuid";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { getUsers, saveUsers, saveSession } from "@/data/storage";
 
-const Logo = '/icons/icon-192.png';
-const SliderImg = '/images/img1.jpg';
+const Logo = "/icons/icon-192.png";
+const SliderImg = "/images/img1.jpg";
 
 const styles: Record<string, CSSProperties> = {
   container: {
@@ -48,15 +49,15 @@ const styles: Record<string, CSSProperties> = {
     alignItems: "center",
     backgroundColor: "var(--light-200)",
     padding: "20px 0 50px",
-    gap: 20
+    gap: 20,
   },
-  logoWrapper: { 
-    display: "flex", 
+  logoWrapper: {
+    display: "flex",
     justifyContent: "center",
-    marginBottom: 10
+    marginBottom: 10,
   },
   logo: {
-    borderRadius: "8px"
+    borderRadius: "8px",
   },
   paper: {
     backgroundColor: "transparent",
@@ -68,35 +69,35 @@ const styles: Record<string, CSSProperties> = {
     alignItems: "stretch",
     gap: 10,
   },
-  title: { 
+  title: {
     fontSize: 25,
-    fontWeight: 500, 
-    color: "var(--dark-100)", 
-    textAlign: "center" ,
-    marginBottom: -5
+    fontWeight: 500,
+    color: "var(--dark-100)",
+    textAlign: "center",
+    marginBottom: -5,
   },
-  subtitle: { 
+  subtitle: {
     fontSize: 11,
-    fontWeight: 450, 
-    color: "var(--dark-200)", 
-    textAlign: "center", 
-    marginBottom: 30
+    fontWeight: 450,
+    color: "var(--dark-200)",
+    textAlign: "center",
+    marginBottom: 30,
   },
-  footerWrapper: { 
+  footerWrapper: {
     fontSize: 11,
-    fontWeight: 450, 
-    color: "var(--dark-200)", 
-    textAlign: "center", 
-    marginTop: 20
+    fontWeight: 450,
+    color: "var(--dark-200)",
+    textAlign: "center",
+    marginTop: 20,
   },
-  footerLink: { 
+  footerLink: {
     fontSize: 11,
-    fontWeight: 450, 
-    color: "var(--dark-100)", 
-    textDecoration: "none", 
-    cursor: "pointer", 
-    transition: "opacity 0.2s", 
-    marginLeft: 4
+    fontWeight: 450,
+    color: "var(--dark-100)",
+    textDecoration: "none",
+    cursor: "pointer",
+    transition: "opacity 0.2s",
+    marginLeft: 4,
   },
   rightPanel: {
     flex: 1,
@@ -107,22 +108,22 @@ const styles: Record<string, CSSProperties> = {
     overflow: "hidden",
     backgroundColor: "var(--dark-300)",
   },
-  inputWrapper: { 
-    display: "flex", 
-    flexDirection: "column", 
-    width: "100%" 
+  inputWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
   },
-  label: { 
-    fontSize: 11, 
-    fontWeight: 450, 
-    marginBottom: 8, 
-    color: "var(--dark-200)" 
+  label: {
+    fontSize: 11,
+    fontWeight: 450,
+    marginBottom: 8,
+    color: "var(--dark-200)",
   },
   input: {
     width: "100%",
     padding: "9px 14px",
     fontSize: 10,
-    fontWeight: 450, 
+    fontWeight: 450,
     borderRadius: 8,
     border: "1px solid var(--dark-300)",
     outline: "none",
@@ -130,28 +131,28 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: "var(--light-100)",
     color: "var(--dark-100)",
   },
-  button: { 
+  button: {
     fontSize: 11,
-    fontWeight: 450, 
-    color: "var(--light-100)", 
-    backgroundColor: "var(--dark-200)", 
+    fontWeight: 450,
+    color: "var(--light-100)",
+    backgroundColor: "var(--dark-200)",
     borderRadius: 8,
-    height: 34, 
-    marginTop: 5, 
+    height: 34,
+    marginTop: 5,
     cursor: "pointer",
     width: "100%",
   },
-  errorText: { 
+  errorText: {
     fontSize: 11,
-    fontWeight: 450, 
+    fontWeight: 450,
     color: "#b42318",
   },
 };
 
 export function SignupForm() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -160,12 +161,12 @@ export function SignupForm() {
     const normalizedEmail = email.trim();
 
     if (!normalizedEmail) {
-      setError('Email is required');
+      setError("Email is required");
       return;
     }
 
     if (!password) {
-      setError('Password is required');
+      setError("Password is required");
       return;
     }
 
@@ -173,12 +174,12 @@ export function SignupForm() {
     const duplicateUser = users.find((user) => user.email === normalizedEmail);
 
     if (duplicateUser) {
-      setError('User already exists');
+      setError("User already exists");
       return;
     }
 
     const newUser = {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       email: normalizedEmail,
       password,
       createdAt: new Date().toISOString(),
@@ -191,7 +192,7 @@ export function SignupForm() {
     });
 
     setError(null);
-    router.replace('/dashboard');
+    router.replace("/dashboard");
   };
 
   const [isMobile, setIsMobile] = useState(false);
@@ -211,11 +212,15 @@ export function SignupForm() {
     <div style={styles.container}>
       <svg style={{ display: "none" }}>
         <filter id="noiseFilter">
-          <feTurbulence type="fractalNoise" baseFrequency="0.6" stitchTiles="stitch" />
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.6"
+            stitchTiles="stitch"
+          />
         </filter>
       </svg>
 
-      <div style={styles.noiseOverlay} />  
+      <div style={styles.noiseOverlay} />
 
       <div style={styles.main}>
         <div style={styles.leftPanel}>
@@ -237,7 +242,9 @@ export function SignupForm() {
             </p>
 
             <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 16 }}
+              >
                 <div style={styles.inputWrapper}>
                   <label htmlFor="signup-email" style={styles.label}>
                     Email
@@ -270,11 +277,7 @@ export function SignupForm() {
                   />
                 </div>
 
-                {error ? (
-                  <p style={styles.errorText}>
-                    {error}
-                  </p>
-                ) : null}
+                {error ? <p style={styles.errorText}>{error}</p> : null}
 
                 <button
                   type="submit"
@@ -302,9 +305,9 @@ export function SignupForm() {
               alt="Hero"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              style={{ objectFit: "cover", objectPosition: "50% 35%"}}
+              style={{ objectFit: "cover", objectPosition: "50% 35%" }}
             />
-        </div>
+          </div>
         )}
       </div>
     </div>
