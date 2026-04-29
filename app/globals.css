@@ -12,6 +12,12 @@
   --dark-300: #e6e6e6;
   --border-100: #636363;  
   --border-200: #d9d9d9;
+  --accent-500: #0f766e; /* teal-ish accent */
+  --accent-400: #10b981; /* lighter green for hover */
+  --accent-600: #0b5f54; /* slightly darker for active */
+  --muted: #9ca3af;
+  --disabled-bg: #e6ece9;
+  --disabled-text: #9aa7a2;
 }
 
 html {
@@ -25,6 +31,120 @@ body {
   color: var(--dark-100);
   font-family: "Inter", sans-serif;
   transition: background 0.3s ease, color 0.3s ease;
+}
+
+button, .button {
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+}
+
+/* Global button styling: applies to all <button> elements to give a subtle, cohesive look */
+button {
+  background-color: var(--accent-500);
+  color: var(--light-100);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+button:hover {
+  background-color: var(--accent-400);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(16,185,129,0.06);
+}
+
+/* Active state: pressed slightly */
+button:active {
+  transform: translateY(0) scale(0.995);
+  background-color: var(--accent-600);
+  box-shadow: 0 4px 12px rgba(11,95,84,0.08);
+}
+
+/* Subtle centered ripple using a pseudo-element */
+button::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 420ms cubic-bezier(.2,.8,.2,1), opacity 420ms ease;
+}
+
+button:active::after {
+  transform: translate(-50%, -50%) scale(16);
+  opacity: 0.0;
+  transition: transform 420ms cubic-bezier(.2,.8,.2,1), opacity 420ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button::after, button { transition: none !important; }
+}
+
+/* Disabled state */
+button:disabled, button[disabled], .button[disabled] {
+  background-color: var(--disabled-bg) !important;
+  color: var(--disabled-text) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: not-allowed !important;
+  opacity: 0.95;
+}
+
+/* Focus-visible for keyboard users */
+button:focus-visible, .button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent-500) 18%, transparent);
+  outline-offset: 3px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  button, .button {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+button:focus, .button:focus,
+input:focus, textarea:focus, select:focus {
+  outline: 3px solid color-mix(in srgb, var(--accent-500) 12%, transparent);
+  outline-offset: 2px;
+}
+
+.btn-accent {
+  background-color: var(--accent-500);
+  color: var(--light-100);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+}
+
+.btn-accent:hover {
+  background-color: var(--accent-400);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(16,185,129,0.06);
+}
+
+.subtle-hover:hover {
+  background-color: rgba(15,118,110,0.04);
+}
+
+.card {
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(15,118,110,0.06);
 }
 
 * {
